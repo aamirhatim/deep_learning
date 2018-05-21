@@ -82,4 +82,10 @@ class Setup:
         '''
         Plot cost and misclassification histories
         '''
-        History.Plot(self.costs, self.counts, self.alpha_choice)
+        History.Histories(self.costs, self.counts, self.alpha_choice)
+
+    def plot_model(self, **kwargs):
+        '''
+        Visualization of a best fit model
+        '''
+        History.Model(self.x, self.y, self.weights, self.model)

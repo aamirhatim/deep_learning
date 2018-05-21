@@ -1,7 +1,7 @@
 import autograd.numpy as np
 import matplotlib.pyplot as plt
 
-class Plot:
+class Histories:
     def __init__(self, costs, counts, alpha):
         if len(counts) == 0:
             self.plot_cost(costs, alpha)                              # Only plot costs if counts is empty
@@ -33,3 +33,13 @@ class Plot:
         plt.xlabel("Iteration")
         plt.ylabel("Misclassifications")
         plt.show
+
+class Model:
+    def __init__(self, x, y, weights, model):
+        self.x = x
+        self.y = y
+
+        print(x)
+        print(y)
+        y_model = model(x, weights)
+        print(y_model)
