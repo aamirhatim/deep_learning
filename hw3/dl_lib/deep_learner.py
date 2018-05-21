@@ -21,7 +21,7 @@ class Setup:
         if name == 'multilayer_perceptron':
             mlp = MLP.Setup(**kwargs)
             self.feature_transforms = mlp.transforms
-            self.weight_matrix = mlp.init_weights
+            self.weight_matrix = mlp.weight_matrix
             self.layer_sizes = mlp.layer_sizes
 
     def choose_normalizer(self, name):
