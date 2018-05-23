@@ -5,7 +5,6 @@ class Setup:
     def __init__(self, name, x, y, feature_transforms):
         self.x = x                                                  # Link input and output data
         self.y = y
-
         self.feature_transforms = feature_transforms
         self.sig = signature(self.feature_transforms)               # Get number of params in feature transform
 
@@ -23,7 +22,7 @@ class Setup:
             self.cost = self.multiclass_counter
 
     def model(self, x, w):
-        # Feature transformation - switch for dealing
+        # feature transformation - switch for dealing
         # with feature transforms that either do or do
         # not have internal parameters
         f = 0
@@ -32,7 +31,7 @@ class Setup:
         else:
             f = self.feature_transforms(x)
 
-        # Compute linear combination and return
+        # compute linear combination and return
         # switch for dealing with feature transforms that either
         # do or do not have internal parameters
         a = 0
@@ -40,10 +39,11 @@ class Setup:
             a = w[1][0] + np.dot(f.T,w[1][1:])
         else:
             a = w[0] + np.dot(f.T,w[1:])
+
         return a.T
 
     def least_squares(self, w):
-        cost = np.sum((self.model(self.x,w).T - self.y)**2)
+        cost = np.sum((self.model(self.x,w) - self.y)**2)
         return cost/float(np.size(self.y))
 
     def softmax(self, w):
@@ -55,16 +55,18 @@ class Setup:
         return 0.25*misclassification
 
     def multiclass_softmax(self, w):
+        # get subset of points
         # pre-compute predictions on all points
         all_evals = self.model(self.x,w)
 
         # compute softmax across data points
-        a = np.log(np.sum(np.exp(all_evals),axis = 0))
+        a = np.log(np.sum(np.exp(all_evals), axis = 0))
 
         # compute cost in compact form using numpy broadcasting
         b = all_evals[self.y.astype(int).flatten(),np.arange(np.size(self.y))]
         cost = np.sum(a - b)
 
+        # return average
         return cost/float(np.size(self.y))
 
     def multiclass_counter(self, w):

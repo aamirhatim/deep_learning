@@ -2,31 +2,6 @@ import autograd.numpy as np
 
 class Setup:
     def __init__(self, **kwargs):
-        a = 'relu'                                              # Set default activation to ReLU
-        if 'activation' in kwargs:
-            a = kwargs['activation']                            # Manually set activation if present
-
-        if a == 'linear':                                       # Preset activations
-            self.activation = lambda data: data
-        elif a == 'relu':
-            self.activation = lambda data: np.maximum(0, data)
-        elif a == 'tanh':
-            self.activation = lambda data: np.tanh(data)
-        elif a == 'sin':
-            self.activation = lambda data: np.sin(data)
-        elif a == 'sinc':
-            self.activation = lambda data: np.sinc(data)
-        elif a == 'maxout':
-            self.activation = lambda data1, data2: np.maximum(data1, data2)
-            self.weight_matrix = self.maxout_init_weights
-            self.transforms = self.maxout_feature_transforms
-        else:                                                   # Manual activation
-            self.activation = kwargs['activation']
-
-        if self.activation in ['linear', 'relu', 'tanh', 'sin', 'sinc']:
-            self.weight_matrix = self.init_weights
-            self.transforms = self.feature_transforms
-
         if 'layer_sizes' in kwargs:
             self.layer_sizes = kwargs['layer_sizes']            # Set layer sizes
         else:                                                   # Else create default setup
@@ -40,23 +15,43 @@ class Setup:
         else:
             self.scale = 0.1
 
-    def init_weights(self):
-        weights = []                                        # Container for weights
+        a = 'relu'                                              # Set default activation to ReLU
+        if 'activation' in kwargs:
+            a = kwargs['activation']                            # Manually set activation if present
 
-        # Loop over desired layer sizes and create
-        # appropriately sized initial weight matrix
-        # for each layer.
+            if a == 'relu':
+                self.activation = lambda data: np.maximum(0, data)
+            elif a == 'tanh':
+                self.activation = lambda data: np.tanh(data)
+            elif a == 'maxout':
+                self.activation = lambda data1, data2: np.maximum(data1, data2)
+                self.weight_matrix = self.maxout_init_weights
+                self.transforms = self.maxout_feature_transforms
+            else:                                                   # Manual activation
+                self.activation = kwargs['activation']
+
+        if a in ['relu', 'tanh']:
+            self.weight_matrix = self.init_weights
+            self.transforms = self.feature_transforms
+
+    def init_weights(self):
+        # container for entire weight tensor
+        weights = []
+
+        # loop over desired layer sizes and create appropriately sized initial
+        # weight matrix for each layer
         for k in range(len(self.layer_sizes)-1):
-            U_k = self.layer_sizes[k]                       # get layer sizes for current weight matrix
+            # get layer sizes for current weight matrix
+            U_k = self.layer_sizes[k]
             U_k_plus_1 = self.layer_sizes[k+1]
 
             # make weight matrix
-            weight = self.scale*np.random.randn(U_k+1, U_k_plus_1)
+            weight = self.scale*np.random.randn(U_k+1,U_k_plus_1)
             weights.append(weight)
 
-        # Re-express weights so that w_init[0] = omega_inner contains all
+        # re-express weights so that w_init[0] = omega_inner contains all
         # internal weight matrices, and w_init = w contains weights of
-        # final linear combination in predict function.
+        # final linear combination in predict function
         w_init = [weights[:-1],weights[-1]]
 
         return w_init
