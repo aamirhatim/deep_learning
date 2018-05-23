@@ -18,6 +18,7 @@ class Setup:
         a = 'relu'                                              # Set default activation to ReLU
         if 'activation' in kwargs:
             a = kwargs['activation']                            # Manually set activation if present
+            self.activation_name = a
 
             if a == 'relu':
                 self.activation = lambda data: np.maximum(0, data)

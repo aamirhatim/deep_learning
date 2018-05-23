@@ -53,7 +53,9 @@ class Setup:
             self.feature_transforms = mlp.transforms
             self.weight_matrix = mlp.weight_matrix
             self.layer_sizes = mlp.layer_sizes
+            self.activation_name = mlp.activation_name
         print('Feature transform:', self.feature_name)
+        print('Activation:', self.activation_name)
         print('Layer sizes:', self.layer_sizes)
 
     def choose_cost(self, name, **kwargs):

@@ -63,6 +63,9 @@ class Setup:
         a = np.log(np.sum(np.exp(all_evals), axis = 0))
 
         # compute cost in compact form using numpy broadcasting
+        # print(all_evals)
+        # print(self.y.astype(int).flatten())
+        # print(np.arange(np.size(self.y)))
         b = all_evals[self.y.astype(int).flatten(),np.arange(np.size(self.y))]
         cost = np.sum(a - b)
 
