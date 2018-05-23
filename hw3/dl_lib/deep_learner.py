@@ -5,23 +5,6 @@ from dl_lib import cost_functions as Cost
 from dl_lib import optimizers as Optimizer
 from dl_lib import plotters as Plotter
 
-# import standard plotting and animation
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from mpl_toolkits.mplot3d import Axes3D
-from IPython.display import clear_output
-
-# import autograd functionality
-from autograd import grad as compute_grad   # The only autograd function you may ever need
-import autograd.numpy as np
-from autograd import hessian as compute_hess
-import math
-import time
-from matplotlib import gridspec
-import copy
-from inspect import signature
-from matplotlib.ticker import FormatStrFormatter
-
 class Setup:
     def __init__(self, x, y, **kwargs):
         self.x = x                                          # Link input and output data
@@ -94,6 +77,11 @@ class Setup:
         else:
             self.alpha_choice = 10**(-1)
 
+        if 'beta' in kwargs:
+            self.beta = kwargs['beta']
+        else:
+            self.beta = 0
+
         self.w0 = self.weight_matrix()                      # Create weight matrix
 
         # Run gradient descent
@@ -106,17 +94,12 @@ class Setup:
             weights, costs = Optimizer.gradient_descent(self.cost, self.alpha_choice, self.max_its, self.w0)
             self.weights.append(weights)                        # Save weight history
             self.costs.append(costs)                            # Save cost history
-            print('Standard gradient descent with alpha =', self.alpha_choice, '@', self.max_its, 'iterations')
+            print('Standard gradient descent with alpha =', self.alpha_choice, 'and beta =', self.beta,'@', self.max_its, 'iterations')
         elif self.optimizer_version == 'normalized':
-            if 'beta' in kwargs:
-                self.beta = kwargs['beta']
-            else:
-                self.beta = 0
-
             weights, costs = Optimizer.normalized_gradient_descent(self.cost, self.alpha_choice, self.max_its, self.w0, self.beta)
             self.weights.append(weights)                        # Save weight history
             self.costs.append(costs)                            # Save cost history
-            print('Normalized gradient descent with alpha =', self.alpha_choice, 'and beta = 0.9 @', self.max_its, 'iterations')
+            print('Normalized gradient descent with alpha =', self.alpha_choice, 'and beta =', self.beta,'@', self.max_its, 'iterations')
 
         if self.cost_name in ['softmax', 'multiclass_softmax']:
             counts = [self.counter(v) for v in weights]
