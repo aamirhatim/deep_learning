@@ -97,15 +97,26 @@ class Setup:
         self.w0 = self.weight_matrix()                      # Create weight matrix
 
         # Run gradient descent
-        weights, costs = Optimizer.gradient_descent(self.cost, self.alpha_choice, self.max_its, self.w0)
-        self.weights.append(weights)                        # Save weight history
-        self.costs.append(costs)                            # Save cost history
+        if 'version' in kwargs:
+            self.optimizer_version = kwargs['version']
+        else:
+            self.optimizer_version = 'standard'
+
+        if self.optimizer_version == 'standard':
+            weights, costs = Optimizer.gradient_descent(self.cost, self.alpha_choice, self.max_its, self.w0)
+            self.weights.append(weights)                        # Save weight history
+            self.costs.append(costs)                            # Save cost history
+            print('Standard gradient descent with alpha =', self.alpha_choice, '@', self.max_its, 'iterations')
+        elif self.optimizer_version == 'normalized':
+            weights, costs = Optimizer.normalized_gradient_descent(self.cost, self.alpha_choice, self.max_its, self.w0, 0.9)
+            self.weights.append(weights)                        # Save weight history
+            self.costs.append(costs)                            # Save cost history
+            print('Normalized gradient descent with alpha =', self.alpha_choice, 'and beta = 0.9 @', self.max_its, 'iterations')
 
         if self.cost_name in ['softmax', 'multiclass_softmax']:
             counts = [self.counter(v) for v in weights]
             self.counts.append(counts)                      # Save misclassification history
 
-        print('Optimized with alpha =', self.alpha_choice, '@', self.max_its, 'iterations')
 
     def show_history(self):
         '''
