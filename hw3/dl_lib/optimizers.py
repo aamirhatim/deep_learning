@@ -40,7 +40,6 @@ def gradient_descent(g,alpha_choice,max_its,w):
     # the gradient at the final step we don't get the final cost function value
     # via the Automatic Differentiatoor)
 
-
     return weight_history,cost_history
 
 def normalized_gradient_descent(g, alpha, max_its, w, beta):

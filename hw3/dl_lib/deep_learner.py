@@ -108,7 +108,12 @@ class Setup:
             self.costs.append(costs)                            # Save cost history
             print('Standard gradient descent with alpha =', self.alpha_choice, '@', self.max_its, 'iterations')
         elif self.optimizer_version == 'normalized':
-            weights, costs = Optimizer.normalized_gradient_descent(self.cost, self.alpha_choice, self.max_its, self.w0, 0.9)
+            if 'beta' in kwargs:
+                self.beta = kwargs['beta']
+            else:
+                self.beta = 0
+
+            weights, costs = Optimizer.normalized_gradient_descent(self.cost, self.alpha_choice, self.max_its, self.w0, self.beta)
             self.weights.append(weights)                        # Save weight history
             self.costs.append(costs)                            # Save cost history
             print('Normalized gradient descent with alpha =', self.alpha_choice, 'and beta = 0.9 @', self.max_its, 'iterations')
