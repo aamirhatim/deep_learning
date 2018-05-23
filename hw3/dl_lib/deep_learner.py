@@ -113,48 +113,10 @@ class Setup:
         '''
         Plotter.Histories(self.costs, self.counts, self.alpha_choice)
 
-    def plot_model(self, w, model, **kwargs):
+    def plot_model(self):
         '''
         Visualization of a best fit model
         '''
-        # construct figure
-        fig, axs = plt.subplots(1, 3, figsize=(15,15))
-
-        # create subplot with 2 panels
-        gs = gridspec.GridSpec(1, 3, width_ratios=[1,5,1])
-        ax1 = plt.subplot(gs[0]); ax1.axis('off')
-        ax = plt.subplot(gs[1]);
-        ax3 = plt.subplot(gs[2]); ax3.axis('off')
-
-        # # scatter points
-        # xmin,xmax,ymin,ymax = self.scatter_pts_2d(self.x,ax)
-        #
-        # # clean up panel
-        # ax.set_xlim([xmin,xmax])
-        # ax.set_ylim([ymin,ymax])
-        xmin = min(self.x[0])
-        xmax = max(self.x[0])
-
-        # label axes
-        ax.set_xlabel(r'$x$', fontsize = 16)
-        ax.set_ylabel(r'$y$', rotation = 0,fontsize = 16,labelpad = 15)
-
-        # create fit
-        s = np.linspace(xmin,xmax,300)[np.newaxis,:]
-        colors = ['k','magenta']
-        if 'colors' in kwargs:
-            colors = kwargs['colors']
-        c = 0
-
-        normalizer = lambda a: a
-        if 'normalizer' in kwargs:
-            normalizer = kwargs['normalizer']
-
-        t = model(normalizer(s),w)
-        ax.plot(s.T,t.T,linewidth = 4,c = 'k')
-        ax.plot(s.T,t.T,linewidth = 2,c = 'r')
-        ax.plot(self.x, self.y)
-
-
-
-        # History.Model(self.inverse_normalizer(self.x), self.y, min_weights, self.model, self.normalizer, self.inverse_normalizer)
+        ind = np.argmin(self.costs)
+        least_weights = self.weights[0][ind]
+        Plotter.Model(self.x, self.y, least_weights, self.costs[0], self.normalizer, self.model)

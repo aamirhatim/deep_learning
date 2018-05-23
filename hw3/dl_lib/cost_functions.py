@@ -25,20 +25,23 @@ class Setup:
         # feature transformation - switch for dealing
         # with feature transforms that either do or do
         # not have internal parameters
-        f = 0
-        if len(self.sig.parameters) == 2:
-            f = self.feature_transforms(x,w[0])
-        else:
-            f = self.feature_transforms(x)
+        # f = 0
+        # if len(self.sig.parameters) == 2:
+        #     f = self.feature_transforms(x,w[0])
+        # else:
+        #     f = self.feature_transforms(x)
+        #
+        # # compute linear combination and return
+        # # switch for dealing with feature transforms that either
+        # # do or do not have internal parameters
+        # a = 0
+        # if len(self.sig.parameters) == 2:
+        #     a = w[1][0] + np.dot(f.T,w[1][1:])
+        # else:
+        #     a = w[0] + np.dot(f.T,w[1:])
 
-        # compute linear combination and return
-        # switch for dealing with feature transforms that either
-        # do or do not have internal parameters
-        a = 0
-        if len(self.sig.parameters) == 2:
-            a = w[1][0] + np.dot(f.T,w[1][1:])
-        else:
-            a = w[0] + np.dot(f.T,w[1:])
+        f = self.feature_transforms(x,w[0])
+        a = w[1][0] + np.dot(f.T,w[1][1:])
 
         return a.T
 

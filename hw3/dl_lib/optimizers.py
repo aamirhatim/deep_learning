@@ -30,12 +30,14 @@ def gradient_descent(g,alpha_choice,max_its,w):
         w = w - alpha*grad_eval
 
         weight_history.append(unflatten(w))
-        #cost_history.append(cost_eval)
+        # cost_history.append(cost_eval)
         cost_history.append(g_flat(w))
+
     # collect final weights
     # weight_history.append(w)
     # compute final cost function value via g itself (since we aren't computing
     # the gradient at the final step we don't get the final cost function value
     # via the Automatic Differentiatoor)
 
-    return weight_history, cost_history
+
+    return weight_history,cost_history

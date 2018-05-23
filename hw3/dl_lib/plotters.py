@@ -1,6 +1,7 @@
 import autograd.numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
+import copy
 
 class Histories:
     def __init__(self, costs, counts, alpha):
@@ -35,48 +36,66 @@ class Histories:
         plt.show()
 
 class Model:
-    def __init__(self, x, y, w, model, **kwargs):
-        # fit_points = np.array([np.linspace(min(x[0]),max(x[0]), 100)])
-        # y_model = model(fit_points, min_weights)             # Get output from final model
-        # self.plot_fit(s, t)
-        # print(s)
-        # print(t)
-        self.x = x
-        self.y = y
-        self.plot_fit(w, model, **kwargs)
-
-    def plot_fit(self, w, model, **kwargs):
+    def __init__(self, x, y, w, cost_history, normalizer, model):
         # construct figure
-        fig, axs = plt.subplots(1, 3, figsize=(9,4))
+        fig = plt.figure( figsize=(15,5))
+        fig.set_tight_layout(False)
 
         # create subplot with 2 panels
-        gs = gridspec.GridSpec(1, 3, width_ratios=[1,5,1])
-        ax1 = plt.subplot(gs[0]); ax1.axis('off')
+        gs = gridspec.GridSpec(1, 2)
+        ax1 = plt.subplot(gs[0]);
         ax = plt.subplot(gs[1]);
-        ax3 = plt.subplot(gs[2]); ax3.axis('off')
 
         # scatter points
-        xmin,xmax,ymin,ymax = self.scatter_pts_2d(self.x,ax)
+        xmin,xmax,ymin,ymax = self.scatter_pts_2d(x,y,ax)
 
         # clean up panel
         ax.set_xlim([xmin,xmax])
         ax.set_ylim([ymin,ymax])
 
         # label axes
-        ax.set_xlabel(r'$x$', fontsize = 16)
-        ax.set_ylabel(r'$y$', rotation = 0,fontsize = 16,labelpad = 15)
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        ax.set_title('tuned model')
 
         # create fit
         s = np.linspace(xmin,xmax,300)[np.newaxis,:]
         colors = ['k','magenta']
-        if 'colors' in kwargs:
-            colors = kwargs['colors']
+
         c = 0
 
-        normalizer = lambda a: a
-        if 'normalizer' in kwargs:
-            normalizer = kwargs['normalizer']
+        #normalizer = lambda a: a
+        #if 'normalizer' in kwargs:
+        #   normalizer = kwargs['normalizer']
 
         t = model(normalizer(s),w)
-        ax.plot(s.T,t.T,linewidth = 4,c = 'k')
+        #ax.plot(s.T,t.T,linewidth = 4,c = 'k')
         ax.plot(s.T,t.T,linewidth = 2,c = 'r')
+        ax1.plot(np.arange(0,len(cost_history)),cost_history,label='alpha= 1')
+        ax1.set_title('Cost history')
+        ax1.set_ylabel('Cost History')
+        ax1.set_xlabel('iteration')
+        plt.show()
+
+    def scatter_pts_2d(self,x,y,ax):
+        # set plotting limits
+        xmax = copy.deepcopy(np.max(x))
+        xmin = copy.deepcopy(np.min(x))
+        xgap = (xmax - xmin)*0.2
+        xmin -= xgap
+        xmax += xgap
+
+        ymax = copy.deepcopy(np.max(y))
+        ymin = copy.deepcopy(np.min(y))
+        ygap = (ymax - ymin)*0.2
+        ymin -= ygap
+        ymax += ygap
+
+        # initialize points
+        ax.scatter(x.flatten(),y.flatten(),color = 'k', edgecolor = 'w',linewidth = 0.9,s = 40)
+
+        # clean up panel
+        ax.set_xlim([xmin,xmax])
+        ax.set_ylim([ymin,ymax])
+
+        return xmin,xmax,ymin,ymax
